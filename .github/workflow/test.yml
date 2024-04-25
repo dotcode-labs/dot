@@ -1,14 +1,19 @@
-name: Test
+name: Rust CI
 
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on: [push, pull_request]
 
 jobs:
-  test_course_definition:
-    uses: codecrafters-io/course-sdk/.github/workflows/test-course-definition.yml@main
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
